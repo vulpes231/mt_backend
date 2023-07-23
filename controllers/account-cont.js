@@ -46,8 +46,8 @@ const createNewAccount = async (req, res) => {
         account_owner: username,
         account_num: account_num,
         account_type: account_type,
-        available_bal: 0,
-        current_bal: 0,
+        available_bal: parseFloat(0).toFixed(2),
+        current_bal: parseFloat(0).toFixed(2),
       };
       accountsDB.setAccount([...accountsDB.accounts, newAccount]);
       await fsPromises.writeFile(
@@ -62,4 +62,14 @@ const createNewAccount = async (req, res) => {
   }
 };
 
-module.exports = { createNewAccount, getAllAccounts };
+const getUserAccount = (req, res) => {
+  const { username } = req.params;
+
+  const user = accountsDB.accounts.find(
+    (acct) => acct.account_owner === username
+  );
+  if (!user) return res.status(400).json({ message: "Invalid user!" });
+  res.status(200).json(user);
+};
+
+module.exports = { createNewAccount, getAllAccounts, getUserAccount };

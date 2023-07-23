@@ -1,0 +1,26 @@
+[
+  {
+    "username": "hush",
+    "description": "MT crt UT 12345 #FF12",
+    "amount": "400.00",
+    "date": "2023-07-22",
+    "available_bal": "400.00",
+    "trans_type": "credit"
+  },
+  {
+    "username": "hush",
+    "description": "MT crt UT 12345 #FF12",
+    "amount": "100.00",
+    "date": "2023-07-22",
+    "available_bal": "300.00",
+    "trans_type": "debit"
+  },
+  {
+    "username": "hush",
+    "description": "LMK deposit YU 123",
+    "amount": "2000.00",
+    "date": "2023-07-22",
+    "available_bal": "2300.00",
+    "trans_type": "credit"
+  }
+]

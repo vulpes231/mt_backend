@@ -75,8 +75,8 @@ const createNewUser = async (req, res) => {
         account_owner: username,
         account_num: newUser.account_no,
         account_type: account_type,
-        available_bal: 0,
-        current_bal: 0,
+        available_bal: parseFloat(0).toFixed(2), // Set initial available balance to 0 as a number
+        current_bal: parseFloat(0).toFixed(2), // Set initial current balance to 0 as a number
       };
       accountsDB.setAccount([...accountsDB.accounts, newAccount]);
 
