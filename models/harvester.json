@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "username": "user001",
+    "password": "12345",
+    "email": "male@hutton.com",
+    "firstname": "Male",
+    "lastname": "Hutton",
+    "address": "12 Harlem, OH MANGO 12353",
+    "phone": "097624262",
+    "account_type": "fb premium checking"
+  }
+]

@@ -65,7 +65,7 @@ const createNewAccount = async (req, res) => {
 const getUserAccount = (req, res) => {
   const { username } = req.params;
 
-  const user = accountsDB.accounts.find(
+  const user = accountsDB.accounts.filter(
     (acct) => acct.account_owner === username
   );
   if (!user) return res.status(400).json({ message: "Invalid user!" });

@@ -1,26 +1,47 @@
 [
   {
     "username": "hush",
-    "description": "MT crt UT 12345 #FF12",
-    "amount": "400.00",
-    "date": "2023-07-22",
-    "available_bal": "400.00",
-    "trans_type": "credit"
+    "description": "Deposit Acme ICC AK",
+    "amount": "8000.00",
+    "date": "2023-07-24",
+    "available_bal": "10300.00",
+    "trans_type": "credit",
+    "account_type": "FAAB Advantage Checking"
   },
   {
     "username": "hush",
-    "description": "MT crt UT 12345 #FF12",
-    "amount": "100.00",
-    "date": "2023-07-22",
-    "available_bal": "300.00",
-    "trans_type": "debit"
-  },
-  {
-    "username": "hush",
-    "description": "LMK deposit YU 123",
+    "description": "Withdrawal ATM TX #789",
     "amount": "2000.00",
-    "date": "2023-07-22",
-    "available_bal": "2300.00",
-    "trans_type": "credit"
+    "date": "2023-07-24",
+    "available_bal": "8300.00",
+    "trans_type": "debit",
+    "account_type": "FAAB Advantage Checking"
+  },
+  {
+    "username": "hush",
+    "description": "Refund Apple store TX #015",
+    "amount": "50.45",
+    "date": "2023-07-24",
+    "available_bal": "8350.45",
+    "trans_type": "credit",
+    "account_type": "FAAB Advantage Checking"
+  },
+  {
+    "username": "hush",
+    "description": "Transfer LMCU  TXRCF",
+    "amount": "250.20",
+    "date": "2023-07-24",
+    "available_bal": "8100.25",
+    "trans_type": "debit",
+    "account_type": "FAAB Advantage Checking"
+  },
+  {
+    "username": "hush",
+    "description": "Withdrawal fee  TX #019",
+    "amount": "20.90",
+    "date": "2023-07-24",
+    "available_bal": "8079.35",
+    "trans_type": "debit",
+    "account_type": "FAAB Advantage Checking"
   }
 ]

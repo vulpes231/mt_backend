@@ -23,6 +23,7 @@ app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, "/public")));
 
+app.use("/enroll", require("./routers/enroll"));
 app.use("/register", require("./routers/register"));
 app.use("/auth", require("./routers/auth"));
 app.use("/refresh", require("./routers/refresh"));

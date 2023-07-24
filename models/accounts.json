@@ -4,7 +4,15 @@
     "account_owner": "hush",
     "account_num": "0568067068",
     "account_type": "FAAB Advantage Checking ",
-    "available_bal": "2300.00",
-    "current_bal": "2500.00"
+    "available_bal": "8079.35",
+    "current_bal": "20.90"
+  },
+  {
+    "id": 3,
+    "account_owner": "ander",
+    "account_num": "0567007875",
+    "account_type": "AAB ACCount Access Boost",
+    "available_bal": "0.00",
+    "current_bal": "0.00"
   }
 ]

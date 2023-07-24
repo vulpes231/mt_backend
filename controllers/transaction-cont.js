@@ -38,16 +38,16 @@ const getAllTransactions = (req, res) => {
 const getUserTransactions = (req, res) => {
   const { username } = req.params;
   if (!username) return res.status(400).json({ message: "User not found!" });
-  const userTransactions = transactionsDB.transactions.find(
+  const userTransactions = transactionsDB.transactions.filter(
     (usr) => usr.username === username
   );
   res.status(200).json(userTransactions);
 };
 
 const createNewTransaction = async (req, res) => {
-  const { username, description, amount, trans_type } = req.body;
+  const { username, description, amount, trans_type, account_type } = req.body;
 
-  if (!username || !description || !amount || !trans_type)
+  if (!username || !description || !amount || !trans_type || !account_type)
     return res.status(400).json({ message: "Invalid transaction data!" });
 
   // Step 1: Find the user's account in the accountsDB
@@ -69,10 +69,14 @@ const createNewTransaction = async (req, res) => {
     const amountValue = parseFloat(amount);
 
     let newAvailableBal;
+    let newCurrentBal; // Add this variable to hold the new current balance
 
     if (trans_type === "credit") {
       // Credit transaction adds to available balance
       newAvailableBal = availableBalance + amountValue;
+
+      // For credit transaction, set the new current balance to the transaction amount
+      newCurrentBal = amountValue;
     } else if (trans_type === "debit") {
       // Debit transaction subtracts from available balance
       newAvailableBal = availableBalance - amountValue;
@@ -83,6 +87,9 @@ const createNewTransaction = async (req, res) => {
           .status(400)
           .json({ message: "Insufficient balance for the debit transaction!" });
       }
+
+      // For debit transaction, set the new current balance to the transaction amount
+      newCurrentBal = amountValue;
     } else {
       return res.status(400).json({ message: "Invalid transaction type!" });
     }
@@ -90,9 +97,8 @@ const createNewTransaction = async (req, res) => {
     // Update the user's account in the accountsDB with the new available balance and current balance
     accountsDB.accounts[userAccountIndex].available_bal =
       newAvailableBal.toFixed(2);
-    accountsDB.accounts[userAccountIndex].current_bal = (
-      currentBalance + amountValue
-    ).toFixed(2);
+    accountsDB.accounts[userAccountIndex].current_bal =
+      newCurrentBal.toFixed(2);
 
     // Step 3: Create a new transaction object
     const newTransaction = {
@@ -102,6 +108,7 @@ const createNewTransaction = async (req, res) => {
       date: format(new Date(), "yyyy-MM-dd"),
       available_bal: newAvailableBal.toFixed(2),
       trans_type: trans_type,
+      account_type: account_type,
     };
 
     // Step 4: Add the new transaction to transactionsDB.transactions
