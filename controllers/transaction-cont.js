@@ -45,9 +45,17 @@ const getUserTransactions = (req, res) => {
 };
 
 const createNewTransaction = async (req, res) => {
-  const { username, description, amount, trans_type, account_type } = req.body;
+  const { username, description, amount, trans_type, account_type, date } =
+    req.body;
 
-  if (!username || !description || !amount || !trans_type || !account_type)
+  if (
+    !username ||
+    !description ||
+    !amount ||
+    !trans_type ||
+    !account_type ||
+    !date
+  )
     return res.status(400).json({ message: "Invalid transaction data!" });
 
   // Step 1: Find the user's account in the accountsDB
@@ -105,7 +113,7 @@ const createNewTransaction = async (req, res) => {
       username: username,
       description: description,
       amount: amountValue.toFixed(2),
-      date: format(new Date(), "yyyy-MM-dd"),
+      date: date,
       available_bal: newAvailableBal.toFixed(2),
       trans_type: trans_type,
       account_type: account_type,

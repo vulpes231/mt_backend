@@ -22,24 +22,22 @@ const getUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const { firstname, lastname, email, password, phone, address, username } =
-    req.body;
+  const { email, phone, address, username } = req.body;
+
+  console.log(username);
+  console.log(email);
+
+  if (!email && !phone && !address)
+    return res.status(400).json({ message: "At least one value is required!" });
 
   const user = usersDB.users.find((usr) => usr.username === username);
 
   if (!user) {
-    return res.status(404).json({ message: "User not found." });
+    return res.status(400).json({ message: "User not found." });
   }
 
   try {
-    if (username) user.username = username;
-    if (password) {
-      const hashedPwd = await bcrypt.hash(password, 10);
-      user.password = hashedPwd;
-    }
     if (email) user.email = email;
-    if (firstname) user.firstname = firstname;
-    if (lastname) user.lastname = lastname;
     if (phone) user.phone = phone;
     if (address) user.address = address;
 
