@@ -14,7 +14,7 @@ const accountsDB = {
 
 const fsPromises = require("fs").promises;
 const path = require("path");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { generateAccountNumber } = require("../utils/gen-account");
 
 const createNewUser = async (req, res) => {

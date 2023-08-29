@@ -7,7 +7,7 @@ const usersDB = {
 
 const fsPromises = require("fs").promises;
 const path = require("path");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const changeUserPassword = async (req, res) => {
   const { username, password, new_pass, confirm } = req.body;

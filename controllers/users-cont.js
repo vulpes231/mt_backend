@@ -5,7 +5,7 @@ const usersDB = {
   },
 };
 
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const fsPromises = require("fs").promises;
 const path = require("path");
 

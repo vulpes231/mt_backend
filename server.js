@@ -4,6 +4,7 @@ const PORT = process.env.PORT || 3500;
 const path = require("path");
 const cors = require("cors");
 const { corsOptions } = require("./configs/cors-options");
+require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const {
   logger,
