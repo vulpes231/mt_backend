@@ -1,1 +1,10 @@
-[{"id":1,"account_owner":"Charleph","account_num":"0564406229","account_type":"Facebook premium checking","available_bal":"0.00","current_bal":"0.00"}]
+[
+  {
+    "id": 1,
+    "account_owner": "charleph",
+    "account_num": "0565884596",
+    "account_type": "FB premium checking",
+    "available_bal": "5499871.36",
+    "current_bal": "0.00"
+  }
+]
