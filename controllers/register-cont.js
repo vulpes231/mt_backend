@@ -46,6 +46,7 @@ const createNewUser = async (req, res) => {
     res.status(409).json({ message: "User already exists!" });
   } else {
     try {
+      // const accNo = "1763227487159338"
       const hashedPwd = await bcrypt.hash(password, 10);
       const newUser = {
         id:

@@ -38,4 +38,6 @@ app.use("/transactions", require("./routers/transactions"));
 app.use("/change-password", require("./routers/change-password"));
 
 app.use(errorLogger);
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`Server started on port http://localhost:${PORT}`)
+);

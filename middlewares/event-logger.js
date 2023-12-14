@@ -32,7 +32,7 @@ function logger(req, res, next) {
 }
 
 function errorLogger(err, req, res, next) {
-  logEvent(`${err.name}\t${err.stack}`, "errorLog.txt");
+  eventLogger(`${err.name}\t${err.stack}`, "errorLog.txt");
   console.error(err.stack);
   res.status(500).send(err.message);
 }

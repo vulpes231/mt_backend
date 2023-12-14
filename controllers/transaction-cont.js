@@ -37,11 +37,25 @@ const getAllTransactions = (req, res) => {
 
 const getUserTransactions = (req, res) => {
   const { username } = req.params;
-  if (!username) return res.status(400).json({ message: "User not found!" });
+  const { account_type } = req.body;
+
+  if (!username || !account_type)
+    return res.status(400).json({ message: "User not found!" });
+
+  const formatAcct = account_type.toLowerCase();
+  console.log(formatAcct);
+
   const userTransactions = transactionsDB.transactions.filter(
     (usr) => usr.username === username
   );
-  res.status(200).json(userTransactions);
+
+  console.log(userTransactions);
+
+  const trnx = userTransactions.filter((tr) => tr.account_type === formatAcct);
+
+  if (trnx.length === 0)
+    return res.status(404).json({ message: "user account not found!" });
+  res.status(200).json(trnx);
 };
 
 const createNewTransaction = async (req, res) => {
