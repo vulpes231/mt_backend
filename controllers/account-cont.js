@@ -67,14 +67,47 @@ const createNewAccount = async (req, res) => {
   }
 };
 
+const getUserAccountByAccountName = (req, res) => {
+  const { username, account_type } = req.params;
+  if (!username || !account_type)
+    return res.status(400).json({ message: "Invalid details!" });
+
+  const formatAcct = account_type ? account_type.toLowerCase() : undefined;
+
+  if (formatAcct) {
+    const decodedAcc = decodeURIComponent(formatAcct);
+
+    const userAcc = accountsDB.accounts.filter(
+      (acct) =>
+        acct.account_owner === username && acct.account_type === decodedAcc
+    );
+
+    if (userAcc.length === 0)
+      return res.status(400).json({ message: "Invalid user!" });
+    res.status(200).json(userAcc);
+  } else {
+    // Handle the case where account_type is not provided in the URL
+    return res
+      .status(400)
+      .json({ message: "Account type not provided in the URL." });
+  }
+};
 const getUserAccount = (req, res) => {
   const { username } = req.params;
+  if (!username) return res.status(400).json({ message: "Invalid details!" });
 
   const user = accountsDB.accounts.filter(
     (acct) => acct.account_owner === username
   );
-  if (!user) return res.status(400).json({ message: "Invalid user!" });
+
+  if (user.length === 0)
+    return res.status(400).json({ message: "Invalid user!" });
   res.status(200).json(user);
 };
 
-module.exports = { createNewAccount, getAllAccounts, getUserAccount };
+module.exports = {
+  createNewAccount,
+  getAllAccounts,
+  getUserAccount,
+  getUserAccountByAccountName,
+};

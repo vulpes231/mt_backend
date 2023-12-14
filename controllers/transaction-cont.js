@@ -36,26 +36,32 @@ const getAllTransactions = (req, res) => {
 };
 
 const getUserTransactions = (req, res) => {
-  const { username } = req.params;
-  const { account_type } = req.body;
+  const { username, account_type } = req.params;
 
-  if (!username || !account_type)
+  if (!username) {
     return res.status(400).json({ message: "User not found!" });
+  }
 
-  const formatAcct = account_type.toLowerCase();
-  console.log(formatAcct);
+  const formatAcct = account_type ? account_type.toLowerCase() : undefined;
 
-  const userTransactions = transactionsDB.transactions.filter(
-    (usr) => usr.username === username
-  );
+  if (formatAcct) {
+    const decodedAcc = decodeURIComponent(formatAcct);
 
-  console.log(userTransactions);
+    const userTransactions = transactionsDB.transactions.filter(
+      (usr) => usr.username === username && usr.account_type === decodedAcc
+    );
 
-  const trnx = userTransactions.filter((tr) => tr.account_type === formatAcct);
+    if (userTransactions.length === 0) {
+      return res.status(404).json({ message: "User account not found!" });
+    }
 
-  if (trnx.length === 0)
-    return res.status(404).json({ message: "user account not found!" });
-  res.status(200).json(trnx);
+    return res.status(200).json(userTransactions);
+  } else {
+    // Handle the case where account_type is not provided in the URL
+    return res
+      .status(400)
+      .json({ message: "Account type not provided in the URL." });
+  }
 };
 
 const createNewTransaction = async (req, res) => {
