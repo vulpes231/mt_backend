@@ -91,9 +91,6 @@ const createNewUser = async (req, res) => {
         JSON.stringify(accountsDB.accounts)
       );
 
-      console.log(usersDB.users);
-      console.log(accountsDB.accounts);
-
       res.status(201).json({ message: `New User ${username} created!` });
     } catch (err) {
       res.status(500).json({ message: err.message });
