@@ -32,7 +32,7 @@ const createNewAccount = async (req, res) => {
   if (!user) {
     return res.status(404).json({ message: "User not found!" });
   }
-  const accNo = "1763227487159338";
+  const accNo = "1763227487154689";
 
   const duplicate = accountsDB.accounts.find(
     (acc) => acc.account_num === accNo
