@@ -17,10 +17,13 @@ const fsPromises = require("fs").promises;
 const path = require("path");
 
 const createExternalAccount = async (req, res) => {
-  const { account_num, routing_num, nickname, username, type } = req.body;
+  const { account_num, routing_num, nickname, account_type } = req.body;
 
-  if (!account_num || !routing_num || !username || !type)
-    return res.sendStatus(400);
+  const username = req.user;
+
+  console.log(req.body);
+
+  if (!account_num || !routing_num || !account_type) return res.sendStatus(400);
 
   const user = usersDB.users.find((usr) => usr.username === username);
 
@@ -34,7 +37,7 @@ const createExternalAccount = async (req, res) => {
           : 1,
       account_num: account_num,
       routing_num: routing_num,
-      account_type: type,
+      account_type: account_type,
       creator: user.username,
       nickname: nickname || null,
     };

@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": 1,
+    "account_num": "125278919900",
+    "routing_num": "632783923",
+    "account_type": "savings",
+    "creator": "vulpes123",
+    "nickname": "Minatow"
+  }
+]
