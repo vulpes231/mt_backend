@@ -59,8 +59,8 @@ const getUserExternalAccounts = async (req, res) => {
       (acct) => acct.creator === username
     );
 
-    if (userExternalAccts.length === 0)
-      return res.status(400).json({ message: "You have no accounts" });
+    if (!userExternalAccts || userExternalAccts.length === 0)
+      return res.status(200).json({ message: "You have no accounts" });
     res.status(200).json(userExternalAccts);
   } catch (error) {
     console.log(error);

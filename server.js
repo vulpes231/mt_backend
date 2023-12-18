@@ -32,7 +32,7 @@ app.use("/", require("./routers/root"));
 
 app.use(verifyJwt);
 app.use("/users", require("./routers/users"));
-// app.use("/transfer", require("./routers/transfer"));
+app.use("/external", require("./routers/external"));
 app.use("/account", require("./routers/account"));
 app.use("/transactions", require("./routers/transactions"));
 app.use("/change-password", require("./routers/change-password"));
