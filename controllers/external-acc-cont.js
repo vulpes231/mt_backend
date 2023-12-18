@@ -24,7 +24,7 @@ const createExternalAccount = async (req, res) => {
 
   const user = usersDB.users.find((usr) => usr.username === username);
 
-  if (!user) return res.sendStatus(404);
+  if (!user) return res.status(404).json({ message: "User not found!" });
 
   try {
     const newExternalAccount = {
@@ -35,7 +35,7 @@ const createExternalAccount = async (req, res) => {
       account_num: account_num,
       routing_num: routing_num,
       account_type: type,
-      creator: username,
+      creator: user.username,
       nickname: nickname || null,
     };
 
@@ -48,7 +48,7 @@ const createExternalAccount = async (req, res) => {
     res.status(201).json({ message: "External account added!" });
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    res.status(500).json({ message: "An error occured" });
   }
 };
 

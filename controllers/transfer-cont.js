@@ -28,7 +28,8 @@ const transferMoney = async (req, res) => {
   const { sender_acct, receiver_acct, amount, memo } = req.body;
 
   //   check if the correct data was sent then proceed otherwise return error
-  if (!sender_acct || !receiver_acct || !amount) return res.sendStatus(400);
+  if (!sender_acct || !receiver_acct || !amount)
+    return res.status(400).json({ message: "Invalid tranfer details" });
 
   const amt = parseFloat(amount);
 
