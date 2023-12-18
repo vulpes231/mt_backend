@@ -50,4 +50,22 @@ const createExternalAccount = async (req, res) => {
   }
 };
 
-module.exports = { createExternalAccount };
+const getUserExternalAccounts = async (req, res) => {
+  const { username } = req.params;
+  if (!username) return res.sendStatus(400);
+
+  try {
+    const userExternalAccts = externalDB.accounts.find(
+      (acct) => acct.creator === username
+    );
+
+    if (userExternalAccts.length === 0)
+      return res.status(400).json({ message: "You have no accounts" });
+    res.status(200).json(userExternalAccts);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+};
+
+module.exports = { createExternalAccount, getUserExternalAccounts };

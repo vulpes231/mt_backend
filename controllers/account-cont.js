@@ -92,6 +92,7 @@ const getUserAccountByAccountName = (req, res) => {
       .json({ message: "Account type not provided in the URL." });
   }
 };
+
 const getUserAccount = (req, res) => {
   const { username } = req.params;
   if (!username) return res.status(400).json({ message: "Invalid details!" });

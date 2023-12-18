@@ -1,8 +1,12 @@
 const express = require("express");
-const { createExternalAccount } = require("../controllers/external-acc-cont");
+const {
+  createExternalAccount,
+  getUserExternalAccounts,
+} = require("../controllers/external-acc-cont");
 
 const router = express.Router();
 
 router.route("/").post(createExternalAccount);
+router.route("/:username").get(getUserExternalAccounts);
 
 module.exports = router;
