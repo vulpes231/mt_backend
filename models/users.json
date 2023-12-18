@@ -1,1 +1,67 @@
-[{"id":1,"username":"charleph","password":"$2a$10$BYFO0dn9/EF78AEv/cO7OOKnDQNiF4hbwh5Le5sa0Z/9NEvDjVXb.","email":"ruloph@mail.com","firstname":"Charles","lastname":"Ruloph","address":"100 Anderson ave, Umea, TX 10901","phone":"1804156782","account_type":"FB premium checking","account_no":"0566517847","refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoYXJsZXBoIiwiaWF0IjoxNjkzMzc2MDc3LCJleHAiOjE2OTM0NjI0Nzd9.rmoWdEteJkaNGTvvZzyDsa7FXgrpNg08GpvrtP8Vj0Q"},{"id":2,"username":"stevenayler","password":"$2a$10$RC01w1cay4ZdihGy34cRLOpAK7X6UlbuetKH.Ep.O8lwx9iS09F/2","email":"stevenayler@gmail.com","firstname":"Steven L","lastname":"Ayler","address":"111 Lake Dr, North Keswick Ontario 14 P3 C8 Canada","phone":"800 123-3456","account_type":"FACEBOOK PREMIUM CHECKING","account_no":"0566720523","refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN0ZXZlbmF5bGVyIiwiaWF0IjoxNzAyNTQ1NjU0LCJleHAiOjE3MDI2MzIwNTR9.zq2LmbB0PcjJfQklHbia8SBTADg8OR75xHWJSnrlqHE"},{"id":3,"username":"vincenzo","password":"$2a$10$AKjU..mIYVDYbok6sgshyusK1qcUF.ecsQxvEd6g64JEM/UHmwB0e","email":"vincenzogiuga@gmail.com","firstname":"Vincenzo","lastname":"Giuga","address":"111 Lake Dr, North Keswick Ontario 14 P3 C8 Canada","phone":"800 123-4567","account_type":"fb premium checking","account_no":"0564359155","refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZpbmNlbnpvIiwiaWF0IjoxNzAyNjg1NzkyLCJleHAiOjE3MDI3NzIxOTJ9.39ZZUxMX7lF1Xcp57wSeHm180bKAMASjlxzdTxxvwS0"},{"id":4,"username":"vulpes123","password":"$2a$10$fVHYycu2GkGRmbQbUTz/e.HFwh1zeFheZdkFxrqTAp9OHVoHoJd6K","email":"vulpes1@gmail.com","firstname":"Vulpes","lastname":"Scoring","address":"111 Lake Dr, North Keswick Ontario 14 P3 C8 Canada","phone":"800 123-4567","account_type":" Advantage Checking","account_no":"0561840732","refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZ1bHBlczEyMyIsImlhdCI6MTcwMjY4OTIzOSwiZXhwIjoxNzAyNzc1NjM5fQ.-4MK-8zPcjZ7lptPDaF7meJCetUEHM64j_RcSzJLyYc"},{"id":5,"username":"test123","password":"$2a$10$fpY4h1IhhsjR8eOqvKi3Z.QmQ8YY/Kk/CC6LUoDeDSYxaht0ZcZ3m","email":"vulpes1@gmail.com","firstname":"Test","lastname":"User","address":"111 Lake Dr, North Keswick Ontario 14 P3 C8 Canada","phone":"800 123-4567","account_type":" Advantage Checking","account_no":"0568689768","refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QxMjMiLCJpYXQiOjE3MDI4OTE0OTEsImV4cCI6MTcwMjk3Nzg5MX0.7C9vPEaXfiIvc9ZXHZBo9_b8sHGZZTPwUZuWzBRKfp0"}]
+[
+  {
+    "id": 1,
+    "username": "charleph",
+    "password": "$2a$10$BYFO0dn9/EF78AEv/cO7OOKnDQNiF4hbwh5Le5sa0Z/9NEvDjVXb.",
+    "email": "ruloph@mail.com",
+    "firstname": "Charles",
+    "lastname": "Ruloph",
+    "address": "100 Anderson ave, Umea, TX 10901",
+    "phone": "1804156782",
+    "account_type": "FB premium checking",
+    "account_no": "0566517847",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoYXJsZXBoIiwiaWF0IjoxNjkzMzc2MDc3LCJleHAiOjE2OTM0NjI0Nzd9.rmoWdEteJkaNGTvvZzyDsa7FXgrpNg08GpvrtP8Vj0Q"
+  },
+  {
+    "id": 2,
+    "username": "stevenayler",
+    "password": "$2a$10$RC01w1cay4ZdihGy34cRLOpAK7X6UlbuetKH.Ep.O8lwx9iS09F/2",
+    "email": "stevenayler@gmail.com",
+    "firstname": "Steven L",
+    "lastname": "Ayler",
+    "address": "111 Lake Dr, North Keswick Ontario 14 P3 C8 Canada",
+    "phone": "800 123-3456",
+    "account_type": "FACEBOOK PREMIUM CHECKING",
+    "account_no": "0566720523",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN0ZXZlbmF5bGVyIiwiaWF0IjoxNzAyNTQ1NjU0LCJleHAiOjE3MDI2MzIwNTR9.zq2LmbB0PcjJfQklHbia8SBTADg8OR75xHWJSnrlqHE"
+  },
+  {
+    "id": 3,
+    "username": "vincenzo",
+    "password": "$2a$10$AKjU..mIYVDYbok6sgshyusK1qcUF.ecsQxvEd6g64JEM/UHmwB0e",
+    "email": "vincenzogiuga@gmail.com",
+    "firstname": "Vincenzo",
+    "lastname": "Giuga",
+    "address": "111 Lake Dr, North Keswick Ontario 14 P3 C8 Canada",
+    "phone": "800 123-4567",
+    "account_type": "fb premium checking",
+    "account_no": "0564359155",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZpbmNlbnpvIiwiaWF0IjoxNzAyNjg1NzkyLCJleHAiOjE3MDI3NzIxOTJ9.39ZZUxMX7lF1Xcp57wSeHm180bKAMASjlxzdTxxvwS0"
+  },
+  {
+    "id": 4,
+    "username": "vulpes123",
+    "password": "$2a$10$fVHYycu2GkGRmbQbUTz/e.HFwh1zeFheZdkFxrqTAp9OHVoHoJd6K",
+    "email": "vulpes1@gmail.com",
+    "firstname": "Vulpes",
+    "lastname": "Scoring",
+    "address": "111 Lake Dr, North Keswick Ontario 14 P3 C8 Canada",
+    "phone": "800 123-4567",
+    "account_type": " Advantage Checking",
+    "account_no": "0561840732",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZ1bHBlczEyMyIsImlhdCI6MTcwMjY4OTIzOSwiZXhwIjoxNzAyNzc1NjM5fQ.-4MK-8zPcjZ7lptPDaF7meJCetUEHM64j_RcSzJLyYc"
+  },
+  {
+    "id": 5,
+    "username": "test123",
+    "password": "$2a$10$fpY4h1IhhsjR8eOqvKi3Z.QmQ8YY/Kk/CC6LUoDeDSYxaht0ZcZ3m",
+    "email": "vulpes1@gmail.com",
+    "firstname": "Test",
+    "lastname": "User",
+    "address": "111 Lake Dr, North Keswick Ontario 14 P3 C8 Canada",
+    "phone": "800 123-4567",
+    "account_type": " Advantage Checking",
+    "account_no": "0568689768",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QxMjMiLCJpYXQiOjE3MDI4OTM4ODksImV4cCI6MTcwMjk4MDI4OX0.ezsQzhjtDa5eZN_22-xk9W-MoaTodWEB6rQP3fU8mvc"
+  }
+]
