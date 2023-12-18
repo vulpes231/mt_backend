@@ -3,11 +3,6 @@ const accountsDB = {
   setAccount: function (data) {
     this.accounts = data;
   },
-  updateAccount: function (accountIndex, newAvailableBal) {
-    if (accountIndex !== -1) {
-      this.accounts[accountIndex].available_bal = newAvailableBal;
-    }
-  },
 };
 
 const transactionsDB = {
@@ -36,19 +31,16 @@ const getAllTransactions = (req, res) => {
 };
 
 const getUserTransactions = (req, res) => {
-  const { username, account_type } = req.params;
+  const { username } = req.params;
+  console.log(username);
 
   if (!username) {
     return res.status(400).json({ message: "User not found!" });
   }
 
-  const formatAcct = account_type ? account_type.toLowerCase() : undefined;
-
-  if (formatAcct) {
-    const decodedAcc = decodeURIComponent(formatAcct);
-
+  try {
     const userTransactions = transactionsDB.transactions.filter(
-      (usr) => usr.username === username && usr.account_type === decodedAcc
+      (usr) => usr.to === username || usr.from === username
     );
 
     if (userTransactions.length === 0) {
@@ -56,31 +48,39 @@ const getUserTransactions = (req, res) => {
     }
 
     return res.status(200).json(userTransactions);
-  } else {
-    // Handle the case where account_type is not provided in the URL
-    return res
-      .status(400)
-      .json({ message: "Account type not provided in the URL." });
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
   }
 };
 
 const createNewTransaction = async (req, res) => {
-  const { username, description, amount, trans_type, account_type, date } =
-    req.body;
+  const {
+    from,
+    to,
+    description,
+    amount,
+    trans_type,
+    account_typeA,
+    account_typeB,
+    date,
+  } = req.body;
 
   if (
-    !username ||
+    !from ||
+    !to ||
     !description ||
     !amount ||
     !trans_type ||
-    !account_type ||
+    !account_typeA ||
+    !account_typeB ||
     !date
   )
     return res.status(400).json({ message: "Invalid transaction data!" });
 
   // Step 1: Find the user's account in the accountsDB
   const userAccountIndex = accountsDB.accounts.findIndex(
-    (acct) => acct.account_owner === username
+    (acct) => acct.account_owner === from
   );
 
   if (userAccountIndex === -1)
@@ -129,14 +129,21 @@ const createNewTransaction = async (req, res) => {
       newCurrentBal.toFixed(2);
 
     // Step 3: Create a new transaction object
+
     const newTransaction = {
-      username: username,
-      description: description,
+      id:
+        transactionsDB.transactions.length > 0
+          ? transactionsDB.transactions[transactionsDB.transactions.length - 1]
+              .id + 1
+          : 1,
+      from: from || null,
+      to: to || null,
       amount: amountValue.toFixed(2),
+      memo: description,
       date: date,
-      available_bal: newAvailableBal.toFixed(2),
       trans_type: trans_type,
-      account_type: account_type,
+      origin: account_typeA,
+      destination: account_typeB,
     };
 
     // Step 4: Add the new transaction to transactionsDB.transactions

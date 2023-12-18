@@ -38,5 +38,21 @@
     "account_type": "account access boost",
     "available_bal": "-20000.00",
     "current_bal": "0.00"
+  },
+  {
+    "id": 6,
+    "account_owner": "vulpes123",
+    "account_num": "0561840732",
+    "account_type": " advantage checking",
+    "available_bal": 1800.4499999999998,
+    "current_bal": 500
+  },
+  {
+    "id": 7,
+    "account_owner": "test123",
+    "account_num": "0568689768",
+    "account_type": " advantage checking",
+    "available_bal": 500,
+    "current_bal": 500
   }
 ]
