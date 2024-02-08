@@ -37,7 +37,7 @@
     "account_num": "1763227487154689",
     "account_type": "account access boost",
     "available_bal": "-13500.00",
-    "current_bal": "6500.00"
+    "current_bal": "0.00"
   },
   {
     "id": 6,
@@ -69,6 +69,6 @@
     "account_num": "176322748711211",
     "account_type": "account access boost",
     "available_bal": "-4500.00",
-    "current_bal": "5500.00"
+    "current_bal": "0.00"
   }
 ]
