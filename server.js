@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use("/enroll", require("./routers/enroll"));
 app.use("/register", require("./routers/register"));
 app.use("/auth", require("./routers/auth"));
-app.use("/change-password", require("./routers/change-password"));
+
 app.use("/", require("./routers/root"));
 
 app.use(verifyJwt);
@@ -35,7 +35,7 @@ app.use("/users", require("./routers/users"));
 app.use("/external", require("./routers/external"));
 app.use("/account", require("./routers/account"));
 app.use("/transactions", require("./routers/transactions"));
-
+app.use("/change-password", require("./routers/change-password"));
 app.use("/refresh", require("./routers/refresh"));
 app.use("/logout", require("./routers/logout"));
 app.use("/transfer", require("./routers/transfer"));

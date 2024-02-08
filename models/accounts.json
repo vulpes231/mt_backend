@@ -1,1 +1,74 @@
-[{"id":1,"account_owner":"charleph","account_num":"0565884596","account_type":"fb premium checking","available_bal":"5499871.36","current_bal":"0.00"},{"id":2,"account_owner":"stevenayler","account_num":"0566720523","account_type":"fb premium checking","available_bal":"5499567.09","current_bal":"50.17"},{"id":3,"account_owner":"stevenayler","account_num":"1763227487159338","account_type":"account access boost","available_bal":"-20000.00","current_bal":"0.00"},{"id":4,"account_owner":"vincenzo","account_num":"0564359155","account_type":"fb premium checking","available_bal":"5499567.09","current_bal":"50.17"},{"id":5,"account_owner":"vincenzo","account_num":"1763227487154689","account_type":"account access boost","available_bal":"-20000.00","current_bal":"0.00"},{"id":6,"account_owner":"vulpes123","account_num":"0561840732","account_type":" advantage checking","available_bal":1800.4499999999998,"current_bal":500},{"id":7,"account_owner":"test123","account_num":"0568689768","account_type":" advantage checking","available_bal":500,"current_bal":500},{"id":8,"account_owner":"vulpes231","account_num":"0568611840","account_type":"checking","available_bal":"0.00","current_bal":"0.00"}]
+[
+  {
+    "id": 1,
+    "account_owner": "charleph",
+    "account_num": "0565884596",
+    "account_type": "fb premium checking",
+    "available_bal": "5499871.36",
+    "current_bal": "0.00"
+  },
+  {
+    "id": 2,
+    "account_owner": "stevenayler",
+    "account_num": "0566720523",
+    "account_type": "fb premium checking",
+    "available_bal": "5499567.09",
+    "current_bal": "50.17"
+  },
+  {
+    "id": 3,
+    "account_owner": "stevenayler",
+    "account_num": "1763227487159338",
+    "account_type": "account access boost",
+    "available_bal": "-20000.00",
+    "current_bal": "0.00"
+  },
+  {
+    "id": 4,
+    "account_owner": "vincenzo",
+    "account_num": "0564359155",
+    "account_type": "fb premium checking",
+    "available_bal": "5499567.09",
+    "current_bal": "50.17"
+  },
+  {
+    "id": 5,
+    "account_owner": "vincenzo",
+    "account_num": "1763227487154689",
+    "account_type": "account access boost",
+    "available_bal": "-13500.00",
+    "current_bal": "6500.00"
+  },
+  {
+    "id": 6,
+    "account_owner": "vulpes123",
+    "account_num": "0561840732",
+    "account_type": " advantage checking",
+    "available_bal": 1800.4499999999998,
+    "current_bal": 500
+  },
+  {
+    "id": 7,
+    "account_owner": "test123",
+    "account_num": "0568689768",
+    "account_type": " advantage checking",
+    "available_bal": 500,
+    "current_bal": 500
+  },
+  {
+    "id": 8,
+    "account_owner": "vulpes231",
+    "account_num": "0568611840",
+    "account_type": "checking",
+    "available_bal": "0.00",
+    "current_bal": "0.00"
+  },
+  {
+    "id": 9,
+    "account_owner": "charleph",
+    "account_num": "176322748711211",
+    "account_type": "account access boost",
+    "available_bal": "-14500.00",
+    "current_bal": "5500.00"
+  }
+]
