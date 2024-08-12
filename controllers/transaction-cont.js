@@ -31,12 +31,7 @@ const getAllTransactions = (req, res) => {
 };
 
 const getUserTransactions = (req, res) => {
-  const { username } = req.params;
-  console.log(username);
-
-  if (!username) {
-    return res.status(400).json({ message: "User not found!" });
-  }
+  const username = req.username;
 
   try {
     const userTransactions = transactionsDB.transactions.filter(

@@ -9,8 +9,8 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getAllAccounts).post(createNewAccount);
-router.route("/:username").get(getUserAccount);
+router.route("/").get(getUserAccount).post(createNewAccount);
+router.route("/all").get(getAllAccounts);
 router.route("/:username/:account_type").get(getUserAccountByAccountName);
 
 module.exports = router;
