@@ -1,71 +1,42 @@
-const accountsDB = {
-  accounts: require("../models/accounts.json"),
-  setAccount: function (data) {
-    this.accounts = data;
-  },
-};
-
-const usersDB = {
-  users: require("../models/users.json"),
-  setUser: function (data) {
-    this.users = data;
-  },
-};
-
 const { generateAccountNumber } = require("../utils/gen-account");
-const fsPromises = require("fs").promises;
-const path = require("path");
-const fs = require("fs");
+const User = require("../models/User");
+const Account = require("../models/Account");
 
-const getAllAccounts = (req, res) => {
-  res.status(200).json(accountsDB.accounts);
+const getAllAccounts = async (req, res) => {
+  try {
+    const accts = await Account.find();
+    res.status(200).json({ accts });
+  } catch (error) {
+    res.status(500).json({ message: "an error occured" });
+  }
 };
 
 const createNewAccount = async (req, res) => {
-  const { username, account_type } = req.body;
+  const { username, accountType } = req.body;
 
-  if (!username || !account_type) {
+  if (!username || !accountType) {
     return res.status(400).json({ message: "All fields required" });
   }
 
   try {
-    const user = usersDB.users.find((usr) => usr.username === username);
+    const user = await User.findOne({ useranme: username });
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
     }
-    const accNo = "1763227487154689";
+    const accNo = parseInt(generateAccountNumber());
 
-    const duplicate = accountsDB.accounts.find(
-      (acc) => acc.account_num === accNo
-    );
-
+    const duplicate = await Account.findOne({ accountNo: accNo });
     if (duplicate) {
       return res.status(409).json({ message: "Account already exists!" });
-    } else {
-      try {
-        // const account_num = generateAccountNumber();
-        const newAccount = {
-          id:
-            accountsDB.accounts.length > 0
-              ? accountsDB.accounts[accountsDB.accounts.length - 1].id + 1
-              : 1,
-          account_owner: username,
-          account_num: accNo,
-          account_type: account_type,
-          available_bal: parseFloat(0).toFixed(2),
-          current_bal: parseFloat(0).toFixed(2),
-        };
-        accountsDB.setAccount([...accountsDB.accounts, newAccount]);
-        await fsPromises.writeFile(
-          path.join(__dirname, "..", "models", "accounts.json"),
-          JSON.stringify(accountsDB.accounts)
-        );
-        console.log(accountsDB.accounts);
-        res.status(201).json({ message: "New account created!" });
-      } catch (err) {
-        res.status(500).json({ message: err.message });
-      }
     }
+
+    const newAccount = {
+      owner: user._id,
+      accountNo: accNo,
+      accountType: accountType,
+    };
+    await Account.create(newAccount);
+    res.status(201).json({ message: "New account created!" });
   } catch (error) {
     res.status(500).json({ message: "an error occured" });
   }
@@ -97,15 +68,15 @@ const getUserAccountByAccountName = (req, res) => {
   }
 };
 
-const getUserAccount = (req, res) => {
+const getUserAccount = async (req, res) => {
   const username = req.user;
-  console.log(username);
-  try {
-    const account = accountsDB.accounts.filter(
-      (acct) => acct.account_owner === username
-    );
 
-    if (account.length === 0)
+  try {
+    const user = await User.findOne({ username });
+    if (!user) return res.status(400).json({ message: "user not found" });
+    const accounts = await Account.find({ owner: user._id });
+
+    if (accounts.length === 0)
       return res.status(400).json({ message: "user has no accounts" });
     res.status(200).json(account);
   } catch (error) {
