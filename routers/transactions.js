@@ -8,8 +8,8 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getAllTransactions).post(createNewTransaction);
+router.route("/").get(getUserTransactions).post(createNewTransaction);
 
-router.route("/:username").get(getUserTransactions);
+router.route("/all").get(getAllTransactions);
 
 module.exports = router;

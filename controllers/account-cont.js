@@ -98,7 +98,8 @@ const getUserAccountByAccountName = (req, res) => {
 };
 
 const getUserAccount = (req, res) => {
-  const username = req.username;
+  const username = req.user;
+  console.log(username);
   try {
     const account = accountsDB.accounts.filter(
       (acct) => acct.account_owner === username

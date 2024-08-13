@@ -1,15 +1,6 @@
-const usersDB = {
-  users: require("../models/users.json"),
-  setUser: function (data) {
-    this.users = data;
-  },
-};
-
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
-const fsPromises = require("fs").promises;
-const path = require("path");
+const User = require("../models/User");
 
 const loginUser = async (req, res) => {
   const { username, password } = req.body;
@@ -19,7 +10,7 @@ const loginUser = async (req, res) => {
       .json({ message: "Username and password is required!" });
 
   try {
-    const user = usersDB.users.find((usr) => usr.username === username);
+    const user = await User.findOne({ username: username });
     if (!user)
       return res.status(401).json({ message: "Username does not exist!" });
 
@@ -46,23 +37,15 @@ const loginUser = async (req, res) => {
         }
       );
 
-      const otherUsers = usersDB.users.filter(
-        (person) => person.username !== user.username
-      );
-
-      const currentUser = { ...user, refreshToken };
-      usersDB.setUser([...otherUsers, currentUser]);
-      await fsPromises.writeFile(
-        path.join(__dirname, "..", "models", "users.json"),
-        JSON.stringify(usersDB.users)
-      );
+      await user.save();
       res.cookie("jwt", refreshToken, {
         httpOnly: true,
         sameSite: "None",
         secure: true,
         maxAge: 24 * 60 * 60 * 1000,
       });
-      res.status(200).json({ accessToken });
+
+      res.status(200).json({ accessToken, user });
     }
   } catch (error) {
     res.status(500).json({ message: "an error occured." });

@@ -10,7 +10,7 @@ const jwt = require("jsonwebtoken");
 async function eventLogger(message, logName) {
   const newDate = format(new Date(), "yyyy/MM/dd\tHH:mm:ss");
   const logItem = `${newDate}\t${uuid()}\t${message}`;
-  console.log(logItem);
+  // console.log(logItem);
 
   try {
     if (!fs.existsSync(path.join(__dirname, "..", "logs"))) {

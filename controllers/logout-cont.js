@@ -1,37 +1,33 @@
-const userDB = {
-  users: require("../models/users.json"),
-  setUser: function (data) {
-    this.users = data;
-  },
-};
-
-const fsPromises = require("fs").promises;
-const path = require("path");
+const User = require("../models/User");
 
 const handleUserLogout = async (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204);
-  const refreshToken = cookies.jwt;
+  try {
+    const refreshToken = cookies.jwt;
 
-  const user = userDB.users.find((usr) => usr.refreshToken === refreshToken);
+    const user = await User.findOne({ refreshToken: refreshToken });
+    if (!user) {
+      res.clearCookie("jwt", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+      });
+      return res.status(404).json({ message: "user not found!" });
+    }
 
-  if (!user) {
     res.clearCookie("jwt", {
       httpOnly: true,
       sameSite: "None",
       secure: true,
     });
-    return res.sendStatus(204);
-  } else {
-    const otherUsers = userDB.users.filter(
-      (usr) => usr.refreshToken !== user.refreshToken
-    );
-    const currentUser = { ...user, refreshToken: "" };
-    adminDB.setAdmin([...otherUsers, currentUser]);
-    await fsPromises.writeFile(
-      path.join(__dirname, "..", "models", "admin.json")
-    );
-    JSON.stringify(userDB.users);
+
+    user.refreshToken = null;
+    await user.save();
+    res.status(204).json({ message: "user logged out successfully." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "an error occured" });
   }
 };
 

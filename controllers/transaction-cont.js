@@ -1,168 +1,69 @@
-const accountsDB = {
-  accounts: require("../models/accounts.json"),
-  setAccount: function (data) {
-    this.accounts = data;
-  },
-};
+const Account = require("../models/Account");
+const Transaction = require("../models/Transaction");
+const User = require("../models/User");
 
-const transactionsDB = {
-  transactions: require("../models/transactions.json"),
-  setTransaction: function (data) {
-    this.transactions = data;
-  },
-};
-
-const { format } = require("date-fns");
-const path = require("path");
-const fsPromises = require("fs").promises;
-
-function updateBal(balance, amount, trans_type) {
-  if (trans_type === "credit") {
-    const newBal = balance + parseFloat(amount);
-    return newBal;
-  } else if (trans_type === "debit") {
-    const newBal = balance - parseFloat(amount); // Subtract the amount for "debit" transactions
-    return newBal;
-  }
-}
-
-const getAllTransactions = (req, res) => {
-  res.status(200).json(transactionsDB.transactions);
-};
-
-const getUserTransactions = (req, res) => {
-  const username = req.username;
-
+const getAllTransactions = async (req, res) => {
   try {
-    const userTransactions = transactionsDB.transactions.filter(
-      (usr) => usr.to === username || usr.from === username
-    );
-
-    if (userTransactions.length === 0) {
-      return res.status(404).json({ message: "User account not found!" });
-    }
-
-    return res.status(200).json(userTransactions);
+    const transactions = await Transaction.find();
+    res.status(200).json({ transactions });
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getUserTransactions = async (req, res) => {
+  const username = req.user;
+  try {
+    const user = await User.findOne({ username: username });
+
+    const userTransactions = await Transaction.find({ receiver: user._id });
+
+    userTransactions.sort((a, b) => a.date === b.date);
+    res.status(200).json({ userTransactions });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: err.message });
   }
 };
 
 const createNewTransaction = async (req, res) => {
-  const {
-    from,
-    to,
-    description,
-    amount,
-    trans_type,
-    account_typeA,
-    account_typeB,
-    date,
-  } = req.body;
+  const { accountNumber, description, amount, type, date, time, username } =
+    req.body;
 
-  if (
-    !from ||
-    !to ||
-    !description ||
-    !amount ||
-    !trans_type ||
-    !account_typeA ||
-    !account_typeB ||
-    !date
-  )
+  if (!accountNumber || !description || !amount || !type || !date)
     return res.status(400).json({ message: "Invalid transaction data!" });
 
-  // Step 1: Find the user's account in the accountsDB
-  const userAccountIndex = accountsDB.accounts.findIndex(
-    (acct) => acct.account_owner === from
-  );
-
-  if (userAccountIndex === -1)
-    return res.status(404).json({ message: "User account not found!" });
-
   try {
-    // Step 2: Get the current balance and calculate the new available balance after the transaction
-    const currentBalance = parseFloat(
-      accountsDB.accounts[userAccountIndex].current_bal
-    );
-    const availableBalance = parseFloat(
-      accountsDB.accounts[userAccountIndex].available_bal
-    );
-    const amountValue = parseFloat(amount);
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ message: "user not found" });
 
-    let newAvailableBal;
-    let newCurrentBal; // Add this variable to hold the new current balance
+    const userAccount = await Account.findOne({ accountNo: accountNumber });
+    if (!userAccount)
+      return res.status(400).json({ message: "invalid account number" });
 
-    if (trans_type === "credit") {
-      // Credit transaction adds to available balance
-      newAvailableBal = availableBalance + amountValue;
+    userAccount.balance = userAccount.balance += parseFloat(amount);
 
-      // For credit transaction, set the new current balance to the transaction amount
-      newCurrentBal = amountValue;
-    } else if (trans_type === "debit") {
-      // Debit transaction subtracts from available balance
-      newAvailableBal = availableBalance - amountValue;
-
-      // Ensure the account has sufficient balance for debit transaction
-      if (newAvailableBal < 0) {
-        return res
-          .status(400)
-          .json({ message: "Insufficient balance for the debit transaction!" });
-      }
-
-      // For debit transaction, set the new current balance to the transaction amount
-      newCurrentBal = amountValue;
-    } else {
-      return res.status(400).json({ message: "Invalid transaction type!" });
-    }
-
-    // Update the user's account in the accountsDB with the new available balance and current balance
-    accountsDB.accounts[userAccountIndex].available_bal =
-      newAvailableBal.toFixed(2);
-    accountsDB.accounts[userAccountIndex].current_bal =
-      newCurrentBal.toFixed(2);
-
-    // Step 3: Create a new transaction object
+    await userAccount.save();
 
     const newTransaction = {
-      id:
-        transactionsDB.transactions.length > 0
-          ? transactionsDB.transactions[transactionsDB.transactions.length - 1]
-              .id + 1
-          : 1,
-      from: from || null,
-      to: to || null,
-      amount: amountValue.toFixed(2),
-      memo: description,
+      accountNo: accountNumber,
+      amount: amount,
+      description: description,
       date: date,
-      trans_type: trans_type,
-      origin: account_typeA,
-      destination: account_typeB,
+      type: type,
+      receiver: user._id,
+      balance: bal,
+      time: time || null,
     };
 
-    // Step 4: Add the new transaction to transactionsDB.transactions
-    transactionsDB.transactions.push(newTransaction);
-    await fsPromises.writeFile(
-      path.join(__dirname, "..", "models", "transactions.json"),
-      JSON.stringify(transactionsDB.transactions)
-    );
-
-    // Save the updated users and accounts to their respective JSON files
-    await fsPromises.writeFile(
-      path.join(__dirname, "..", "models", "accounts.json"),
-      JSON.stringify(accountsDB.accounts)
-    );
-
-    // Send a response indicating success (you can modify this as needed)
-    res.status(200).json({ message: "Transaction created successfully!" });
-  } catch (err) {
+    await Transaction.create(newTransaction);
+    res.status(200).json({ message: "transaction created!" });
+  } catch (error) {
     console.log(err);
     res.status(500).json({ message: "Error creating transaction!" });
   }
 };
-
-const deleteTransactions = (req, res) => {};
 
 module.exports = {
   createNewTransaction,
