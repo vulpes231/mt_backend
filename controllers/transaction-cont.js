@@ -1,6 +1,7 @@
 const Account = require("../models/Account");
 const Transaction = require("../models/Transaction");
 const User = require("../models/User");
+const mongoose = require("mongoose");
 
 const getAllTransactions = async (req, res) => {
   try {
@@ -17,17 +18,21 @@ const getUserTransactions = async (req, res) => {
   try {
     const user = await User.findOne({ username: username });
 
-    const userTransactions = await Transaction.find({ receiver: user._id });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    userTransactions.sort((a, b) => a.date === b.date);
+    // Find the transactions and sort by createdAt in descending order
+    const userTransactions = await Transaction.find({
+      receiver: user._id,
+    }).sort({ createdAt: -1 });
+
     res.status(200).json({ userTransactions });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: error.message });
   }
 };
-
-const mongoose = require("mongoose");
 
 const createNewTransaction = async (req, res) => {
   const { accountNumber, description, amount, type, date, time, username } =

@@ -25,6 +25,7 @@ const transactionSchema = new Schema({
   },
   time: {
     type: String,
+    required: true,
   },
   type: {
     type: String,
@@ -33,6 +34,10 @@ const transactionSchema = new Schema({
   },
   balance: {
     type: Number,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
