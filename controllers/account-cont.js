@@ -78,7 +78,7 @@ const getUserAccount = async (req, res) => {
 
     if (accounts.length === 0)
       return res.status(400).json({ message: "user has no accounts" });
-    res.status(200).json(account);
+    res.status(200).json({ accounts });
   } catch (error) {
     res.status(500).json({ message: "an error occured" });
   }

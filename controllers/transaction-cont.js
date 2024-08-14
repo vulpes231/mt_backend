@@ -27,40 +27,70 @@ const getUserTransactions = async (req, res) => {
   }
 };
 
+const mongoose = require("mongoose");
+
 const createNewTransaction = async (req, res) => {
   const { accountNumber, description, amount, type, date, time, username } =
     req.body;
 
-  if (!accountNumber || !description || !amount || !type || !date)
+  if (!accountNumber || !description || !amount || !type || !date) {
     return res.status(400).json({ message: "Invalid transaction data!" });
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
-    const user = await User.findOne({ username });
-    if (!user) return res.status(404).json({ message: "user not found" });
+    const user = await User.findOne({ username }).session(session);
+    if (!user) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    const userAccount = await Account.findOne({ accountNo: accountNumber });
-    if (!userAccount)
-      return res.status(400).json({ message: "invalid account number" });
+    const userAccount = await Account.findOne({
+      accountNo: accountNumber,
+    }).session(session);
+    if (!userAccount) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({ message: "Invalid account number" });
+    }
 
-    userAccount.balance = userAccount.balance += parseFloat(amount);
+    const parsedAmount = parseFloat(amount);
+    if (type === "credit") {
+      userAccount.balance += parsedAmount;
+    } else if (type === "debit") {
+      userAccount.balance -= parsedAmount;
+    } else {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({ message: "Invalid transaction type" });
+    }
 
-    await userAccount.save();
+    await userAccount.save({ session });
 
     const newTransaction = {
       accountNo: accountNumber,
-      amount: amount,
+      amount: parsedAmount,
       description: description,
       date: date,
       type: type,
       receiver: user._id,
-      balance: bal,
+      balance: userAccount.balance,
       time: time || null,
     };
 
-    await Transaction.create(newTransaction);
-    res.status(200).json({ message: "transaction created!" });
+    await Transaction.create([newTransaction], { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ message: "Transaction created!" });
   } catch (error) {
-    console.log(err);
+    await session.abortTransaction();
+    session.endSession();
+    console.log(error);
     res.status(500).json({ message: "Error creating transaction!" });
   }
 };
