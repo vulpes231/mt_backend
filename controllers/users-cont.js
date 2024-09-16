@@ -1,3 +1,5 @@
+const Account = require("../models/Account");
+const Transaction = require("../models/Transaction");
 const User = require("../models/User");
 
 const getAllUsers = async (req, res) => {
@@ -41,4 +43,26 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, updateUser, getUser };
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const userAccount = await Account.deleteMany({ owner: id });
+    if (!userAccount)
+      return res.status(404).json({ message: "User account not found!" });
+
+    const userTransactions = await Transaction.deleteMany({ receiver: id });
+
+    const user = await User.findByIdAndDelete(id);
+    if (!user) return res.status(404).json({ message: "User not found!" });
+
+    res.status(200).json({ message: "User deleted!" });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ message: "An error occurred while deleting the user." });
+  }
+};
+
+module.exports = { getAllUsers, updateUser, getUser, deleteUser };

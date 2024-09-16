@@ -14,9 +14,9 @@ const getAllTransactions = async (req, res) => {
 };
 
 const getUserTransactions = async (req, res) => {
-  const username = req.user;
+  const userId = req.userId;
   try {
-    const user = await User.findOne({ username: username });
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -63,10 +63,10 @@ const createNewTransaction = async (req, res) => {
     }
 
     const parsedAmount = parseFloat(amount);
-    if (type === "credit") {
-      userAccount.balance += parsedAmount;
-    } else if (type === "debit") {
-      userAccount.balance -= parsedAmount;
+    if (type == "credit") {
+      userAccount.balance = userAccount.balance += parsedAmount;
+    } else if (type == "debit") {
+      userAccount.balance = userAccount.balance -= parsedAmount;
     } else {
       await session.abortTransaction();
       session.endSession();

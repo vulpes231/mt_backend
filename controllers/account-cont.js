@@ -69,7 +69,7 @@ const getUserAccountByAccountName = (req, res) => {
 };
 
 const getUserAccount = async (req, res) => {
-  const username = req.user;
+  const username = req.username;
 
   try {
     const user = await User.findOne({ username });

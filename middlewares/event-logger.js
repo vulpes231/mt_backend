@@ -56,7 +56,8 @@ const verifyJwt = (req, res, next) => {
     if (err) {
       res.status(403).json({ message: "Session expired. please login again" });
     } else {
-      req.user = decoded.username;
+      req.username = decoded.username;
+      req.userId = decoded.userId;
       next();
     }
   });
