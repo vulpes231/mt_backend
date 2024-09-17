@@ -17,7 +17,7 @@ const accountSchema = new Schema({
     enum: [
       "facebook premium savings",
       "facebook premium checking",
-      "accoun access boost(AAB)",
+      "account access boost (AAB)",
     ],
     required: true,
   },

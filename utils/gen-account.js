@@ -6,7 +6,7 @@ const generateRandom7Digits = () => {
 
 const generateAccountNumber = () => {
   const random7Digits = generateRandom7Digits();
-  return "056" + random7Digits;
+  return "1335" + random7Digits;
 };
 
 module.exports = { generateAccountNumber };

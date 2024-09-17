@@ -19,7 +19,7 @@ const createNewAccount = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ useranme: username });
+    const user = await User.findOne({ username: username });
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
     }
@@ -38,6 +38,7 @@ const createNewAccount = async (req, res) => {
     await Account.create(newAccount);
     res.status(201).json({ message: "New account created!" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "an error occured" });
   }
 };
