@@ -36,7 +36,7 @@ app.use("/", require("./routers/root"));
 app.use(verifyJwt);
 
 // Authenticated routes
-app.use("/users", require("./routers/users"));
+app.use("/user", require("./routers/users"));
 app.use("/account", require("./routers/account"));
 app.use("/transactions", require("./routers/transactions"));
 app.use("/change-password", require("./routers/change-password"));
