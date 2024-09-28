@@ -100,8 +100,23 @@ const createNewTransaction = async (req, res) => {
   }
 };
 
+const getAccountTransaction = async (req, res) => {
+  const userId = req.userId;
+  if (!userId)
+    return res.status(401).json({ message: "You're not logged in." });
+  const { accountNo } = req.params;
+  try {
+    const trnxs = await Transaction.find({ accountNo: accountNo });
+    res.status(200).json({ trnxs });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createNewTransaction,
   getUserTransactions,
   getAllTransactions,
+  getAccountTransaction,
 };
