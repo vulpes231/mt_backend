@@ -43,6 +43,7 @@ app.use("/change-password", require("./routers/change-password"));
 app.use("/refresh", require("./routers/refresh"));
 app.use("/logout", require("./routers/logout"));
 app.use("/transfer", require("./routers/transfer"));
+app.use("/external", require("./routers/external"));
 
 // Error handling middleware
 app.use(errorLogger);
