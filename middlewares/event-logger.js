@@ -49,7 +49,6 @@ const credentials = (req, res, next) => {
 const verifyJwt = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   if (!authHeader) res.status(401).json({ message: "You're not logged in!" });
-  // console.log(authHeader);
 
   const token = authHeader.split(" ")[1];
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {

@@ -38,6 +38,7 @@ const createNewTransaction = async (req, res) => {
   const { accountNumber, description, amount, type, date, time, username } =
     req.body;
 
+  console.log(req.body);
   if (!accountNumber || !description || !amount || !type || !date) {
     return res.status(400).json({ message: "Invalid transaction data!" });
   }
