@@ -35,8 +35,16 @@ const getUserTransactions = async (req, res) => {
 };
 
 const createNewTransaction = async (req, res) => {
-  const { accountNumber, description, amount, type, date, time, username } =
-    req.body;
+  const {
+    accountNumber,
+    description,
+    amount,
+    type,
+    date,
+    time,
+    username,
+    status,
+  } = req.body;
 
   console.log(req.body);
   if (!accountNumber || !description || !amount || !type || !date) {
@@ -85,6 +93,7 @@ const createNewTransaction = async (req, res) => {
       receiver: user._id,
       balance: userAccount.balance,
       time: time || null,
+      status: status || "completed",
     };
 
     await Transaction.create([newTransaction], { session });

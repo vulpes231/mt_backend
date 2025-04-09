@@ -27,6 +27,9 @@ const transactionSchema = new Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+  },
   type: {
     type: String,
     enum: ["credit", "debit", "transfer"],
