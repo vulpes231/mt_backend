@@ -3,7 +3,6 @@ const express = require("express");
 const {
 	getAllAccounts,
 	createNewAccount,
-	getUserAccountByAccountName,
 	getUserAccounts,
 	getAccountInfo,
 } = require("../controllers/account-cont");

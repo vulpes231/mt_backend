@@ -24,21 +24,29 @@ const getUserTransactions = async (req, res) => {
 	const userId = req.userId;
 	if (!userId) return res.status(400).json({ message: "Bad request!" });
 
-	const page = Math.max(1, req.query.page || 1);
-	const limit = Math.min(10, req.query.limit || 10);
+	const page = Math.max(1, parseInt(req.query.page) || 1);
+	const limit = Math.min(10, parseInt(req.query.limit) || 10);
 	const sortBy = req.query.sortBy;
 	const filterBy = req.query.filterBy;
+	const filterValue = req.query.filterValue; // 👈 added
 
 	try {
 		const sort = {};
-		const filter = {};
+		const filter = { userId }; // ensure transactions are scoped to the user
 
-		if (sortBy) sort[sortBy] = -1;
-		if (filterBy) filter[filterBy] = filterBy;
+		// Apply filter if provided
+		if (filterBy && filterValue) {
+			filter[filterBy] = filterValue;
+		}
+
+		// Apply sorting if provided
+		if (sortBy) {
+			sort[sortBy] = -1; // descending
+		}
 
 		const userTransactions = await Transaction.find(filter)
 			.sort(sort)
-			.skip((page * 1) / limit)
+			.skip((page - 1) * limit) // 👈 fixed skip calculation
 			.limit(limit);
 
 		const totalItems = await Transaction.countDocuments(filter);
@@ -47,7 +55,7 @@ const getUserTransactions = async (req, res) => {
 		res.status(200).json({
 			data: userTransactions,
 			success: true,
-			message: "user transactions fetched successfully.",
+			message: "User transactions fetched successfully.",
 			pagination: {
 				currentPage: page,
 				totalPage: totalPages,
