@@ -1,16 +1,17 @@
 const express = require("express");
 
 const {
-  getAllAccounts,
-  createNewAccount,
-  getUserAccount,
-  getUserAccountByAccountName,
+	getAllAccounts,
+	createNewAccount,
+	getUserAccountByAccountName,
+	getUserAccounts,
+	getAccountInfo,
 } = require("../controllers/account-cont");
 
 const router = express.Router();
 
-router.route("/").get(getUserAccount).post(createNewAccount);
+router.route("/").get(getUserAccounts).post(createNewAccount);
 router.route("/all").get(getAllAccounts);
-router.route("/:username/:account_type").get(getUserAccountByAccountName);
+router.route("/:accountId").get(getAccountInfo);
 
 module.exports = router;
