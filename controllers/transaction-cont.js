@@ -32,7 +32,7 @@ const getUserTransactions = async (req, res) => {
 
 	try {
 		const sort = {};
-		const filter = { userId }; // ensure transactions are scoped to the user
+		const filter = { receiver: userId }; // ensure transactions are scoped to the user
 
 		// Apply filter if provided
 		if (filterBy && filterValue) {
@@ -109,9 +109,9 @@ const createNewTransaction = async (req, res) => {
 
 		const parsedAmount = parseFloat(amount);
 		if (type == "credit") {
-			userAccount.balance = userAccount.balance += parsedAmount;
+			userAccount.balance += parsedAmount;
 		} else if (type == "debit") {
-			userAccount.balance = userAccount.balance -= parsedAmount;
+			userAccount.balance -= parsedAmount;
 		} else {
 			await session.abortTransaction();
 			session.endSession();
@@ -152,18 +152,49 @@ const createNewTransaction = async (req, res) => {
 };
 
 const getAccountTransaction = async (req, res) => {
+	// console.log(req.query);
 	const userId = req.userId;
 	if (!userId)
 		return res.status(401).json({ message: "You're not logged in." });
-	const { accountNo } = req.params;
+	const accountNo = req.query.accountNo;
+	const page = Math.max(1, parseInt(req.query.page) || 1);
+	const limit = Math.min(10, parseInt(req.query.limit) || 10);
+	const sortBy = req.query.sortBy;
+	const filterBy = req.query.filterBy;
+	const filterValue = req.query.filterValue; // 👈 added
 	try {
-		const trnxs = await Transaction.find({ accountNo: accountNo }).lean();
+		const sort = {};
+		const filter = { receiver: userId, accountNo: accountNo }; // ensure transactions are scoped to the user
+
+		// Apply filter if provided
+		if (filterBy && filterValue) {
+			filter[filterBy] = filterValue;
+		}
+
+		// Apply sorting if provided
+		if (sortBy) {
+			sort[sortBy] = -1; // descending
+		}
+		const trnxs = await Transaction.find(filter)
+			.sort(sort)
+			.skip((page - 1) * limit)
+			.limit(limit);
+
+		const totalItems = await Transaction.countDocuments(filter);
+		const totalPages = Math.ceil(totalItems / limit);
+
 		res.status(200).json({
 			data: trnxs,
 			success: true,
 			message: "Account transactions fetched succesfully.",
+			pagination: {
+				currentPage: page,
+				totalPage: totalPages,
+				totalItem: totalItems,
+			},
 		});
 	} catch (error) {
+		console.log(error);
 		res.status(500).json({
 			message: error.message,
 			data: null,

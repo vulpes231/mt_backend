@@ -5,13 +5,11 @@ const Account = require("../models/Account");
 const getAllAccounts = async (req, res) => {
 	try {
 		const accts = await Account.find();
-		res
-			.status(200)
-			.json({
-				data: accts,
-				success: true,
-				message: "Account fetched successfully",
-			});
+		res.status(200).json({
+			data: accts,
+			success: true,
+			message: "Account fetched successfully",
+		});
 	} catch (error) {
 		res
 			.status(500)
@@ -33,7 +31,7 @@ const createNewAccount = async (req, res) => {
 		}
 		const accNo = parseInt(generateAccountNumber());
 
-		const duplicate = await Account.findOne({ accountNo: accNo });
+		const duplicate = await Account.findOne({ accountType: accountType });
 		if (duplicate) {
 			return res
 				.status(409)
@@ -59,7 +57,7 @@ const createNewAccount = async (req, res) => {
 
 const getAccountInfo = async (req, res) => {
 	const { accountId } = req.params;
-	if (accountId)
+	if (!accountId)
 		return res
 			.status(400)
 			.json({ message: "Invalid account ID!", status: false });
