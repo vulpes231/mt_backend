@@ -7,10 +7,10 @@ const { corsOptions } = require("./configs/cors-options");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const {
-  logger,
-  errorLogger,
-  verifyJwt,
-  credentials,
+	logger,
+	errorLogger,
+	verifyJwt,
+	credentials,
 } = require("./middlewares/event-logger");
 const { connectDB } = require("./configs/connectDb");
 const mongoose = require("mongoose");
@@ -44,13 +44,14 @@ app.use("/refresh", require("./routers/refresh"));
 app.use("/logout", require("./routers/logout"));
 app.use("/transfer", require("./routers/transfer"));
 app.use("/external", require("./routers/external"));
+app.use("/admin", require("./routers/admin"));
 
 // Error handling middleware
 app.use(errorLogger);
 
 // Start the server once the database connection is open
 mongoose.connection.once("open", () => {
-  app.listen(PORT, () =>
-    console.log(`Server started on port http://localhost:${PORT}`)
-  );
+	app.listen(PORT, () =>
+		console.log(`Server started on port http://localhost:${PORT}`)
+	);
 });

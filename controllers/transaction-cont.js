@@ -25,29 +25,40 @@ const getUserTransactions = async (req, res) => {
 	if (!userId) return res.status(400).json({ message: "Bad request!" });
 
 	const page = Math.max(1, parseInt(req.query.page) || 1);
-	const limit = Math.min(10, parseInt(req.query.limit) || 10);
-	const sortBy = req.query.sortBy;
+	const limit = Math.min(50, parseInt(req.query.limit) || 10); // Increased max limit to 50
+	const sortBy = req.query.sortBy || "createdAt"; // Default sort by createdAt
+	const sortOrder = req.query.sortOrder === "asc" ? 1 : -1; // Add sort order option
 	const filterBy = req.query.filterBy;
-	const filterValue = req.query.filterValue; // 👈 added
+	const filterValue = req.query.filterValue;
 
 	try {
 		const sort = {};
-		const filter = { receiver: userId }; // ensure transactions are scoped to the user
+		const filter = { receiver: userId };
 
-		// Apply filter if provided
+		// Enhanced filtering for enum fields
 		if (filterBy && filterValue) {
-			filter[filterBy] = filterValue;
+			if (filterBy === "status") {
+				filter.status = { $in: filterValue.split(",") }; // Allow multiple statuses: ?filterBy=status&filterValue=pending,completed
+			} else if (filterBy === "type") {
+				filter.type = { $in: filterValue.split(",") }; // Allow multiple types
+			} else {
+				filter[filterBy] = filterValue;
+			}
 		}
 
-		// Apply sorting if provided
-		if (sortBy) {
-			sort[sortBy] = -1; // descending
+		// Enhanced sorting with defaults
+		if (sortBy === "date" || sortBy === "time") {
+			// For date/time sorting, you might want to combine them or use createdAt
+			sort["createdAt"] = sortOrder;
+		} else {
+			sort[sortBy] = sortOrder;
 		}
 
 		const userTransactions = await Transaction.find(filter)
 			.sort(sort)
-			.skip((page - 1) * limit) // 👈 fixed skip calculation
-			.limit(limit);
+			.skip((page - 1) * limit)
+			.limit(limit)
+			.lean(); // Add lean() for better performance if not modifying
 
 		const totalItems = await Transaction.countDocuments(filter);
 		const totalPages = Math.ceil(totalItems / limit);
@@ -58,13 +69,16 @@ const getUserTransactions = async (req, res) => {
 			message: "User transactions fetched successfully.",
 			pagination: {
 				currentPage: page,
-				totalPage: totalPages,
-				totalItem: totalItems,
+				totalPages: totalPages, // Fixed: consistent naming
+				totalItems: totalItems, // Fixed: consistent naming
+				hasNext: page < totalPages,
+				hasPrev: page > 1,
 			},
 		});
 	} catch (error) {
+		console.error("Get user transactions error:", error);
 		res.status(500).json({
-			message: error.message,
+			message: "Internal server error",
 			data: null,
 			success: false,
 		});

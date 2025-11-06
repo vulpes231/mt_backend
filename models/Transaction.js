@@ -45,10 +45,14 @@ const transactionSchema = new Schema(
 		createdAt: {
 			type: Date,
 			default: Date.now,
+			index: -1, // Descending index for latest first sorting
 		},
 	},
 	{ timestamps: true }
 );
+
+// Compound index for better query performance when sorting by createdAt
+transactionSchema.index({ createdAt: -1 });
 
 const Transaction = mongoose.model("Transaction", transactionSchema);
 module.exports = Transaction;
