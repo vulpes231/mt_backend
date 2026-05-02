@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { generateUserToken } = require("../middlewares/verifyToken");
 
 const handleUserToken = async (req, res) => {
   const cookies = req.cookies;
@@ -13,19 +13,16 @@ const handleUserToken = async (req, res) => {
 
     if (!user) return res.status(403).json({ message: "Forbidden!" });
 
+    const newToken = await generateUserToken(user.username, user._id, "access");
+
     jwt.verify(
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET,
       (err, decoded) => {
         if (err || user.username !== decoded.username) return res.status(403);
-        const accessToken = jwt.sign(
-          { username: decoded.username },
-          process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: "1d" }
-        );
-
+        const accessToken = newToken;
         res.status(200).json({ accessToken });
-      }
+      },
     );
   } catch (error) {
     console.log(error);
