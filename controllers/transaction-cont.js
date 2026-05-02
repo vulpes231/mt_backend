@@ -122,6 +122,5 @@ const getAccountTransaction = async (req, res) => {
 
 module.exports = {
   getUserTransactions,
-
   getAccountTransaction,
 };

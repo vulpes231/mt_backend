@@ -10,7 +10,6 @@ const cookieParser = require("cookie-parser");
 const {
   logger,
   errorLogger,
-  verifyJwt,
   credentials,
 } = require("./middlewares/event-logger");
 const { connectDB } = require("./configs/connectDb");
@@ -27,10 +26,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "/public")));
 
+app.use("/manage-admin", require("./routers/admin/adminRoute"));
 app.use("/auth", require("./routers/auth"));
 app.use("/", require("./routers/root"));
 
-app.use(verifyToken);
+const requireAuth = verifyToken();
+const requireAdmin = verifyToken("admin");
+
+app.use(requireAuth);
 app.use("/user", require("./routers/users"));
 app.use("/account", require("./routers/account"));
 app.use("/transactions", require("./routers/transactions"));
@@ -40,10 +43,21 @@ app.use("/logout", require("./routers/logout"));
 app.use("/transfer", require("./routers/transfer"));
 app.use("/external", require("./routers/external"));
 
-app.use(verifyToken("admin"));
-app.use("/manage-account", require("./routers/admin/accountRoute"));
-app.use("/manage-transaction", require("./routers/admin/transaction"));
-app.use("/manage-user", require("./routers/admin/manageUserRoute"));
+app.use(
+  "/manage-account",
+  requireAdmin,
+  require("./routers/admin/accountRoute"),
+);
+app.use(
+  "/manage-transaction",
+  requireAdmin,
+  require("./routers/admin/transaction"),
+);
+app.use(
+  "/manage-user",
+  requireAdmin,
+  require("./routers/admin/manageUserRoute"),
+);
 
 app.use(errorLogger);
 

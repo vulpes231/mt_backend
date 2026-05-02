@@ -30,6 +30,7 @@ const loginUser = async (req, res) => {
       "refresh",
     );
 
+    user.refreshToken = refreshToken;
     await user.save();
 
     res.cookie("jwt", refreshToken, {

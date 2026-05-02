@@ -173,4 +173,4 @@ async function editTransaction(req, res) {
   }
 }
 
-module.exports = { editTransaction };
+module.exports = { editTransaction, createNewTransaction, getAllTransactions };
