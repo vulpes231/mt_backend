@@ -83,8 +83,8 @@ const transferMoney = async (req, res) => {
     }
 
     const now = new Date();
-    const formattedDate = format(now, "yyyy-MM-dd");
-    const formattedTime = format(now, "HH:mm:ss");
+    const formattedTime = format(now, "hh:mm a");
+    const formattedDate = format(now, "MMM dd, yyyy");
 
     const senderTransaction = new Transaction({
       accountId: senderAccount._id,
@@ -97,7 +97,7 @@ const transferMoney = async (req, res) => {
       type: "withdraw",
       userId: senderAccount.userId,
       balance: senderAccount.balance.available,
-      status: "completed",
+      status: "pending",
       reference: `TXN_${Date.now()}_${senderAccount.userId}`,
     });
 
