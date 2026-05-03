@@ -5,7 +5,9 @@ const User = require("../../models/User");
 
 const getAllTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find();
+    const sort = { createdAt: -1 };
+
+    const transactions = await Transaction.find().sort(sort).lean();
     res.status(200).json({
       data: transactions,
       success: true,
@@ -21,23 +23,15 @@ const getAllTransactions = async (req, res) => {
 };
 
 const createNewTransaction = async (req, res) => {
-  const {
-    accountNumber,
-    description,
-    amount,
-    type,
-    date,
-    time,
-    username,
-    status,
-  } = req.body;
+  const { description, amount, type, date, time, status, userId, accountId } =
+    req.body;
 
   const role = req.role;
 
   if (!role || role !== "admin")
     return res.status(403).json({ message: "Forbidden!" });
 
-  if (!accountNumber || !description || !amount || !type || !date) {
+  if (!accountId || !description || !amount || !type || !date || !userId) {
     return res.status(400).json({ message: "Invalid transaction data!" });
   }
 
@@ -45,16 +39,19 @@ const createNewTransaction = async (req, res) => {
   session.startTransaction();
 
   try {
-    const user = await User.findOne({ username }).session(session);
+    const user = await User.findById(userId).session(session);
     if (!user) {
       await session.abortTransaction();
       session.endSession();
       return res.status(404).json({ message: "User not found!" });
     }
 
-    const userAccount = await Account.findOne({
-      accountNo: accountNumber,
-    }).session(session);
+    const userAccts = await Account.find({ owner: user._id });
+
+    const userAccount = userAccts.find(
+      (acct) => acct._id.toString() === accountId,
+    );
+
     if (!userAccount) {
       await session.abortTransaction();
       session.endSession();
@@ -75,7 +72,7 @@ const createNewTransaction = async (req, res) => {
     await userAccount.save({ session });
 
     const newTransaction = {
-      accountNo: accountNumber,
+      accountNo: userAccount.accountNo,
       amount: parsedAmount,
       description: description,
       date: date,

@@ -112,4 +112,39 @@ const getAdminInfo = async (req, res) => {
   }
 };
 
-module.exports = { loginAdminAccount, createAdminAccount, getAdminInfo };
+const logoutAdmin = async (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies?.jwt) return res.sendStatus(204);
+  try {
+    const refreshToken = cookies.jwt;
+
+    const user = await Admin.findOne({ refreshToken: refreshToken });
+    if (!user) {
+      res.clearCookie("jwt", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+      });
+      return res.status(404).json({ message: "user not found!" });
+    }
+
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+    });
+
+    user.refreshToken = null;
+    await user.save();
+    res.status(204).json({ message: "Admin logged out successfully." });
+  } catch (error) {
+    res.status(500).json({ message: error.message || "An error occured" });
+  }
+};
+
+module.exports = {
+  loginAdminAccount,
+  createAdminAccount,
+  getAdminInfo,
+  logoutAdmin,
+};

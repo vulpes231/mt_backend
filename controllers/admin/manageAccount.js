@@ -17,6 +17,22 @@ const getAllAccounts = async (req, res) => {
   }
 };
 
+const fetchUserAccounts = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const accts = await Account.find({ owner: userId }).lean();
+    res.status(200).json({
+      data: accts,
+      success: true,
+      message: "User account fetched successfully",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: error.message, success: false, data: null });
+  }
+};
+
 const createNewAccount = async (req, res) => {
   const { username, accountType } = req.body;
 
@@ -60,4 +76,4 @@ const createNewAccount = async (req, res) => {
   }
 };
 
-module.exports = { createNewAccount, getAllAccounts };
+module.exports = { createNewAccount, getAllAccounts, fetchUserAccounts };

@@ -38,6 +38,8 @@ const createNewUser = async (req, res) => {
     phone,
   } = req.body;
 
+  console.log(req.body);
+
   if (
     !username ||
     !password ||
