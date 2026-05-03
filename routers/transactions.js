@@ -9,6 +9,6 @@ const router = express.Router();
 
 router.route("/").get(getUserTransactions);
 
-router.route("/account").get(getAccountTransaction);
+router.route("/:accountId").get(getAccountTransaction);
 
 module.exports = router;

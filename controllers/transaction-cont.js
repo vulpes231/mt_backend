@@ -16,7 +16,7 @@ const getUserTransactions = async (req, res) => {
 
   try {
     const sort = {};
-    const filter = { receiver: userId };
+    const filter = { userId };
 
     if (filterBy && filterValue) {
       if (filterBy === "status") {
@@ -89,6 +89,8 @@ const getAccountTransaction = async (req, res) => {
       .sort(sort)
       .skip((page - 1) * limit)
       .limit(limit);
+
+    console.log(trnxs.length);
 
     const totalItems = await Transaction.countDocuments(filter);
     const totalPages = Math.ceil(totalItems / limit);

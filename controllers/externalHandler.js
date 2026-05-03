@@ -10,7 +10,12 @@ const addExternalAccount = async (req, res) => {
   try {
     const externalData = { bank, account, routing };
 
-    const external = await External.addExternal(userId, externalData);
+    const external = await External.create({
+      bankName: bank,
+      account,
+      routing,
+      userId,
+    });
 
     res.status(201).json({
       success: true,
@@ -31,7 +36,7 @@ const fetchUserExternal = async (req, res) => {
   if (!userId) return res.status(400).json({ message: "Bad request!" });
 
   try {
-    const externalAccs = await External.getUserExternals(userId);
+    const externalAccs = await External.find({ userId }).lean();
 
     res.status(200).json({
       data: externalAccs,
@@ -63,7 +68,7 @@ const editUserExternal = async (req, res) => {
       acctToUpdate.routing = routingNo;
     }
     if (bankName) {
-      acctToUpdate.bank = bankName;
+      acctToUpdate.bankName = bankName;
     }
 
     acctToUpdate.save();
