@@ -31,7 +31,7 @@ const getUserAccounts = async (req, res) => {
       .json({ message: "You're not logged in!", success: false });
 
   try {
-    const userAccounts = await Account.find({ owner: userId }).lean();
+    const userAccounts = await Account.find({ userId }).lean();
 
     res.status(200).json({
       data: userAccounts,

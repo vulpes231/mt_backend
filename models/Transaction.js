@@ -4,15 +4,17 @@ const Schema = mongoose.Schema;
 
 const transactionSchema = new Schema(
   {
-    receiver: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
       index: true,
     },
-    accountNo: {
-      type: Number,
+    accountId: {
+      type: Schema.Types.ObjectId,
+      ref: "Account",
       required: true,
+      index: true,
     },
     amount: {
       type: Number,
@@ -32,21 +34,17 @@ const transactionSchema = new Schema(
     status: {
       type: String,
       enum: ["pending", "completed", "failed"],
-      default: "pending",
+      default: "completed",
     },
     type: {
       type: String,
-      enum: ["credit", "debit", "transfer"],
+      enum: ["deposit", "withdraw", "transfer"],
       required: true,
     },
     balance: {
       type: Number,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-      index: -1,
-    },
+    reference: { type: String },
   },
   { timestamps: true },
 );

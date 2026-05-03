@@ -20,7 +20,7 @@ const getAllAccounts = async (req, res) => {
 const fetchUserAccounts = async (req, res) => {
   const { userId } = req.params;
   try {
-    const accts = await Account.find({ owner: userId }).lean();
+    const accts = await Account.find({ userId }).lean();
     res.status(200).json({
       data: accts,
       success: true,
@@ -34,35 +34,38 @@ const fetchUserAccounts = async (req, res) => {
 };
 
 const createNewAccount = async (req, res) => {
-  const { username, accountType } = req.body;
+  const { userId, accountName, balance } = req.body;
 
   const role = req.role;
 
   if (!role || role !== "admin")
     return res.status(403).json({ message: "Forbidden!" });
 
-  if (!username || !accountType) {
+  if (!userId || !accountName) {
     return res.status(400).json({ message: "All fields required" });
   }
 
   try {
-    const user = await User.findOne({ username: username });
+    const user = await User.findById(userId).select("-password -refreshToken");
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
     }
     const accNo = parseInt(generateAccountNumber());
 
-    const duplicate = await Account.findOne({ accountType: accountType });
+    const duplicate = await Account.findOne({ accountNumber: accNo }).lean();
     if (duplicate) {
       return res
         .status(409)
         .json({ message: "Account already exists!", success: false });
     }
 
+    const parsedBal = parseFloat(balance);
+
     const newAccount = {
-      owner: user._id,
-      accountNo: accNo,
-      accountType: accountType,
+      userId: user._id,
+      accountNumber: accNo,
+      accountName,
+      balance: { total: parsedBal || 0, available: parsedBal || 0 },
     };
     await Account.create(newAccount);
 
@@ -70,9 +73,11 @@ const createNewAccount = async (req, res) => {
       .status(200)
       .json({ message: "New account created!", success: false, data: null });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: error.message, success: false, data: null });
+    res.status(500).json({
+      message: error.message || "Failed to create account",
+      success: false,
+      data: null,
+    });
   }
 };
 

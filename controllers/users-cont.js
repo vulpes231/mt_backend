@@ -23,7 +23,7 @@ const getUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const { email, phone, address } = req.body;
+  const { email, phone, street, state, country, city, zip } = req.body;
 
   const userId = req.userId;
   if (!userId) return res.status(400).json({ message: "Bad request!" });
@@ -34,7 +34,11 @@ const updateUser = async (req, res) => {
 
     if (email) user.email = email;
     if (phone) user.phone = phone;
-    if (address) user.address = address;
+    if (street) user.address.street = street;
+    if (state) user.address.state = state;
+    if (country) user.address.country = country;
+    if (city) user.address.city = city;
+    if (zip) user.address.zip = zip;
 
     await user.save();
 
@@ -52,4 +56,37 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { updateUser, getUser };
+const activateTwoFactor = async (req, res) => {
+  const { type, pin } = req.body;
+
+  const userId = req.userId;
+  if (!userId) return res.status(400).json({ message: "Bad request!" });
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(400).json({ message: "User not found." });
+
+    if (type) user.security.type = type;
+
+    if (type === "pin" && pin) {
+      user.security.pin = pin;
+    }
+    user.security.isTwofa = true;
+
+    await user.save();
+
+    res.status(200).json({
+      message: `${user.username} profile updated!`,
+      data: null,
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      data: null,
+      success: false,
+    });
+  }
+};
+
+module.exports = { updateUser, getUser, activateTwoFactor };

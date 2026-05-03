@@ -33,7 +33,11 @@ const createNewUser = async (req, res) => {
     username,
     password,
     email,
-    address,
+    street,
+    country,
+    city,
+    state,
+    zip,
     accountType,
     phone,
   } = req.body;
@@ -47,7 +51,11 @@ const createNewUser = async (req, res) => {
     !lastname ||
     !email ||
     !phone ||
-    !address ||
+    !street ||
+    !country ||
+    !city ||
+    !state ||
+    !zip ||
     !accountType
   )
     return res.status(400).json({ message: "All fields required" });
@@ -66,16 +74,16 @@ const createNewUser = async (req, res) => {
         email: email,
         firstname: firstname,
         lastname: lastname,
-        address: address,
+        address: { street, state, city, country, zip },
         phone: phone,
       };
 
       const createUser = await User.create(newUser);
 
       const newAccount = {
-        owner: createUser._id,
-        accountNo: accNo,
-        accountType: accountType,
+        userId: createUser._id,
+        accountNumber: accNo,
+        accountName: accountType,
       };
 
       await Account.create(newAccount);
@@ -91,11 +99,11 @@ const deleteUser = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const userAccount = await Account.deleteMany({ owner: userId });
+    const userAccount = await Account.deleteMany({ userId: userId });
     if (!userAccount)
       return res.status(404).json({ message: "User account not found!" });
 
-    await Transaction.deleteMany({ receiver: userId });
+    await Transaction.deleteMany({ userId: userId });
 
     const user = await User.findByIdAndDelete(userId);
     if (!user) return res.status(404).json({ message: "User not found!" });

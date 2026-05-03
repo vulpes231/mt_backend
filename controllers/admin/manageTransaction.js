@@ -46,41 +46,51 @@ const createNewTransaction = async (req, res) => {
       return res.status(404).json({ message: "User not found!" });
     }
 
-    const userAccts = await Account.find({ owner: user._id });
-
-    const userAccount = userAccts.find(
+    const userAccts = await Account.find({ userId });
+    const depositAccount = userAccts.find(
       (acct) => acct._id.toString() === accountId,
     );
 
-    if (!userAccount) {
+    if (!depositAccount) {
       await session.abortTransaction();
       session.endSession();
       return res.status(404).json({ message: "Account not found!" });
     }
 
     const parsedAmount = parseFloat(amount);
-    if (type == "credit") {
-      userAccount.balance += parsedAmount;
-    } else if (type == "debit") {
-      userAccount.balance -= parsedAmount;
+    const transactionStatus = status || "completed";
+
+    if (type === "deposit") {
+      depositAccount.balance.total += parsedAmount;
+      depositAccount.balance.available += parsedAmount;
+    } else if (type === "withdraw") {
+      if (depositAccount.balance.available < parsedAmount) {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(400).json({ message: "Insufficient balance!" });
+      }
+      depositAccount.balance.total -= parsedAmount;
+      depositAccount.balance.available -= parsedAmount;
     } else {
       await session.abortTransaction();
       session.endSession();
-      return res.status(400).json({ message: "Invalid transaction type" });
+      return res.status(400).json({
+        message: "Invalid transaction type! Must be deposit or withdraw",
+      });
     }
 
-    await userAccount.save({ session });
+    await depositAccount.save({ session });
 
     const newTransaction = {
-      accountNo: userAccount.accountNo,
+      accountId: depositAccount._id,
       amount: parsedAmount,
       description: description,
       date: date,
       type: type,
-      receiver: user._id,
-      balance: userAccount.balance,
-      time: time || null,
-      status: status || "completed",
+      userId: user._id,
+      balance: depositAccount.balance.available,
+      time: time,
+      status: transactionStatus,
     };
 
     await Transaction.create([newTransaction], { session });
@@ -118,9 +128,7 @@ async function editTransaction(req, res) {
     }
 
     if (status && status === "failed") {
-      const account = await Account.findOne({
-        accountNo: transaction.accountNo,
-      });
+      const account = await Account.findById(transaction.accountId);
 
       if (!account) {
         return res.status(404).json({ message: "Account not found!" });
@@ -128,16 +136,19 @@ async function editTransaction(req, res) {
 
       const processReversal = async (type) => {
         switch (type) {
-          case "debit":
-            account.balance += transaction.amount;
+          case "withdraw":
+            account.balance.total += transaction.amount;
+            account.balance.available += transaction.amount;
             await account.save();
             break;
-          case "credit":
-            account.balance -= transaction.amount;
+          case "deposit":
+            account.balance.total -= transaction.amount;
+            account.balance.available -= transaction.amount;
             await account.save();
             break;
           case "transfer":
-            account.balance += transaction.amount;
+            account.balance.total += transaction.amount;
+            account.balance.available += transaction.amount;
             await account.save();
             break;
           default:
@@ -148,7 +159,7 @@ async function editTransaction(req, res) {
       await processReversal(transaction.type);
 
       transaction.status = status;
-      transaction.balance = account.balance;
+      transaction.balance = account.balance.available;
       await transaction.save();
     } else if (status) {
       transaction.status = status;
@@ -170,4 +181,131 @@ async function editTransaction(req, res) {
   }
 }
 
-module.exports = { editTransaction, createNewTransaction, getAllTransactions };
+async function deleteTransaction(req, res) {
+  const { transactionId } = req.params;
+  const userId = req.userId;
+  const userRole = req.role;
+
+  if (!transactionId) {
+    return res.status(400).json({
+      message: "Bad request! Transaction ID required",
+      data: null,
+      success: false,
+    });
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const transaction =
+      await Transaction.findById(transactionId).session(session);
+
+    if (!transaction) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({
+        message: "Transaction not found!",
+        data: null,
+        success: false,
+      });
+    }
+
+    if (userRole !== "admin") {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(403).json({
+        message: "Forbidden!",
+        data: null,
+        success: false,
+      });
+    }
+
+    if (transaction.status === "failed") {
+      await Transaction.findByIdAndDelete(transaction._id).session(session);
+      await session.commitTransaction();
+      session.endSession();
+
+      return res.status(200).json({
+        message: "Failed transaction removed successfully",
+        data: null,
+        success: true,
+      });
+    }
+
+    if (transaction.status === "completed") {
+      const account = await Account.findById(transaction.accountId).session(
+        session,
+      );
+
+      if (!account) {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(404).json({
+          message: "Associated account not found!",
+          data: null,
+          success: false,
+        });
+      }
+
+      if (transaction.type === "deposit") {
+        const newTotal = account.balance.total - transaction.amount;
+        const newAvailable = account.balance.available - transaction.amount;
+
+        if (newTotal < 0 || newAvailable < 0) {
+          await session.abortTransaction();
+          session.endSession();
+          return res.status(400).json({
+            message: "Cannot delete deposit: Would result in negative balance",
+            data: null,
+            success: false,
+          });
+        }
+
+        account.balance.total = newTotal;
+        account.balance.available = newAvailable;
+      } else if (transaction.type === "withdraw") {
+        account.balance.total += transaction.amount;
+        account.balance.available += transaction.amount;
+      } else if (transaction.type === "transfer") {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(400).json({
+          message:
+            "Cannot delete transfer transactions directly. Please use the transfer reversal endpoint.",
+          data: null,
+          success: false,
+        });
+      }
+
+      await account.save({ session });
+
+      await Transaction.findByIdAndDelete(transaction._id).session(session);
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({
+      message: "Transaction deleted successfully",
+      data: null,
+      success: true,
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Delete transaction error:", error);
+    res.status(500).json({
+      message: error.message,
+      data: null,
+      success: false,
+    });
+  }
+}
+
+module.exports = {
+  editTransaction,
+  createNewTransaction,
+  getAllTransactions,
+  deleteTransaction,
+};
