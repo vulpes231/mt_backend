@@ -2,16 +2,16 @@ const External = require("../models/External");
 
 const addExternalAccount = async (req, res) => {
   const userId = req.userId;
-  const { bank, account, routing } = req.body;
+  const { bankName, account, routing } = req.body;
 
-  if (!bank || !account || !routing)
+  if (!bankName || !account || !routing)
     return res.status(400).json({ message: "invalid input" });
 
   try {
-    const externalData = { bank, account, routing };
+    const externalData = { bankName, account, routing };
 
     const external = await External.create({
-      bankName: bank,
+      bankName,
       account,
       routing,
       userId,

@@ -9,6 +9,8 @@ const transferMoney = async (req, res) => {
   const { senderAccountId, receiverAccountId, amount, description, type } =
     req.body;
 
+  console.log(req.body);
+
   if (!senderAccountId || !receiverAccountId || !amount || isNaN(amount)) {
     return res.status(400).json({ message: "Invalid transfer details" });
   }
